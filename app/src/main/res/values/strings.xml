@@ -12,4 +12,5 @@
     <string name="title_error">Error</string>
     <string name="status_uploading">Uploading..</string>
     <string name="status_processing">Processing...</string>
+    <string name="error_output_not_saved">Output image not saved</string>
 </resources>

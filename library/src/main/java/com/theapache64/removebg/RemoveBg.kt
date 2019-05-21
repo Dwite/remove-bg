@@ -3,6 +3,8 @@ package com.theapache64.removebg
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import com.google.gson.GsonBuilder
+import com.theapache64.removebg.utils.CountingFileRequestBody
+import com.theapache64.removebg.utils.ErrorResponse
 import com.theapache64.twinkill.logger.info
 import okhttp3.*
 import java.io.File
@@ -23,10 +25,16 @@ object RemoveBg {
         GsonBuilder().create()
     }
 
+    /**
+     * To initialize the apikey. Should be called before calling from method.
+     */
     fun init(apiKey: String) {
         RemoveBg.apiKey = apiKey
     }
 
+    /**
+     * To remove background from the given image file.
+     */
     fun from(file: File, callback: RemoveBgCallback) {
 
         require(apiKey != null) { "You must call RemoveBg.init before calling RemoveBg.from" }

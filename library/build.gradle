@@ -2,14 +2,13 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 28
-
+    compileSdkVersion compile_sdk_version
 
     defaultConfig {
-        minSdkVersion 16
-        targetSdkVersion 28
-        versionCode 1
-        versionName "1.0"
+        minSdkVersion min_sdk_version
+        targetSdkVersion target_sdk_version
+        versionCode library_version_code
+        versionName library_version_name
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -41,6 +40,7 @@ dependencies {
     // OkHttp
     implementation 'com.squareup.okhttp3:okhttp:3.14.2'
 
+    // Logger
     implementation 'com.theapache64.twinkill:logger:0.0.1-alpha04'
 }
 repositories {

@@ -12,6 +12,7 @@ import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.FileProvider
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
@@ -25,7 +26,7 @@ import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.single.BasePermissionListener
 import com.karumi.dexter.listener.single.CompositePermissionListener
 import com.karumi.dexter.listener.single.DialogOnDeniedPermissionListener
-import com.theapache64.removebg.ErrorResponse
+import com.theapache64.removebg.utils.ErrorResponse
 import com.theapache64.removebg.RemoveBg
 import com.theapache64.twinkill.logger.info
 import java.io.File
@@ -38,7 +39,8 @@ class MainActivity : AppCompatActivity() {
         val rootPath = Environment.getExternalStorageDirectory().absolutePath
         File("$rootPath/remove-bg")
     }
-    private var image: File? = null
+    private var inputImage: File? = null
+    private var outputImage: File? = null
 
     @BindView(R.id.iv_input)
     lateinit var ivInput: ImageView
@@ -70,7 +72,7 @@ class MainActivity : AppCompatActivity() {
     @OnClick(R.id.b_choose_image, R.id.i_choose_image)
     fun onChooseImageClicked() {
 
-        info("Choose image clicked")
+        info("Choose inputImage clicked")
 
         ImagePicker.create(this)
             .single()
@@ -85,27 +87,56 @@ class MainActivity : AppCompatActivity() {
         tvInputDetails.text = ""
     }
 
+    @OnClick(R.id.iv_input)
+    fun onInputClicked() {
+        if (inputImage != null) {
+            viewImage(inputImage!!)
+        } else {
+            toast(R.string.error_no_image_selected)
+        }
+    }
+
+    @OnClick(R.id.iv_output)
+    fun onOutputClicked() {
+        if (outputImage != null) {
+            viewImage(outputImage!!)
+        } else {
+            toast(R.string.error_output_not_saved)
+        }
+    }
+
+    private fun viewImage(inputImage: File) {
+
+        val uri = FileProvider.getUriForFile(this, "${BuildConfig.APPLICATION_ID}.provider", inputImage)
+
+        Intent(Intent.ACTION_VIEW).apply {
+            setDataAndType(uri, "image/*")
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            startActivity(this)
+        }
+    }
+
     @OnClick(R.id.b_process)
     fun onProcessClicked() {
-        if (image != null) {
+        if (inputImage != null) {
 
-            info("Image is ${image!!.path}")
+            info("Image is ${inputImage!!.path}")
 
             // Check permission
             checkPermission {
 
                 info("Permission granted")
 
-                // permission granted, compress the image now
-                compressImage(image!!) { bitmap ->
+                // permission granted, compress the inputImage now
+                compressImage(inputImage!!) { bitmap ->
 
                     info("Image compressed")
 
-                    saveImage(bitmap) { compressedImage ->
+                    saveImage("${System.currentTimeMillis()}", bitmap) { compressedImage ->
 
-                        info("Compressed image saved to ${compressedImage.absolutePath}, and removing bg...")
+                        info("Compressed inputImage saved to ${compressedImage.absolutePath}, and removing bg...")
                         val compressedImageSize = compressedImage.length() / 1024
-                        val originalImageSize = image!!.length() / 1024
+                        val originalImageSize = inputImage!!.length() / 1024
 
                         pbProgress.visibility = View.VISIBLE
                         tvProgress.visibility = View.VISIBLE
@@ -113,10 +144,10 @@ class MainActivity : AppCompatActivity() {
                         tvProgress.setText(R.string.status_uploading)
                         pbProgress.progress = 0
 
-                        val finalImage = if (compressedImageSize < originalImageSize) compressedImage else image!!
+                        val finalImage = if (compressedImageSize < originalImageSize) compressedImage else inputImage!!
                         appendInputDetails("Compressed : ${finalImage.length() / 1024}KB")
 
-                        // image saved, now upload
+                        // inputImage saved, now upload
                         RemoveBg.from(finalImage, object : RemoveBg.RemoveBgCallback {
 
                             override fun onProcessing() {
@@ -148,6 +179,11 @@ class MainActivity : AppCompatActivity() {
                                     ivOutput.visibility = View.VISIBLE
                                     tvProgress.visibility = View.INVISIBLE
                                     pbProgress.visibility = View.INVISIBLE
+
+                                    // Save output image
+                                    saveImage("${inputImage!!.name}-no-bg", bitmap) {
+                                        outputImage = it
+                                    }
                                 }
                             }
 
@@ -176,15 +212,15 @@ class MainActivity : AppCompatActivity() {
     /**
      * To save given bitmap into a file
      */
-    private fun saveImage(bitmap: Bitmap, onSaved: (file: File) -> Unit) {
+    private fun saveImage(fileName: String, bitmap: Bitmap, onSaved: (file: File) -> Unit) {
 
         // Create project dir
         if (!projectDir.exists()) {
             projectDir.mkdir()
         }
 
-        // Create image file
-        val imageFile = File("$projectDir/${System.currentTimeMillis()}.jpg")
+        // Create inputImage file
+        val imageFile = File("$projectDir/$fileName.jpg")
         imageFile.outputStream().use { out ->
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out)
             out.flush()
@@ -194,7 +230,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * To compress given image file with Glide
+     * To compress given inputImage file with Glide
      */
     private fun compressImage(image: File, onLoaded: (bitmap: Bitmap) -> Unit) {
 
@@ -249,18 +285,20 @@ class MainActivity : AppCompatActivity() {
 
             if (imagePicked != null) {
 
-                this.image = File(imagePicked.path)
+                this.inputImage = File(imagePicked.path)
+
+                ivInput.visibility = View.VISIBLE
 
                 Glide.with(this)
-                    .load(this.image)
+                    .load(this.inputImage)
                     .into(ivInput)
 
                 // Showing process button
                 bProcess.visibility = View.VISIBLE
 
                 clearInputDetails()
-                appendInputDetails("Image : ${image!!.name}")
-                appendInputDetails("Original Size : ${image!!.length() / 1024}KB")
+                appendInputDetails("Image : ${inputImage!!.name}")
+                appendInputDetails("Original Size : ${inputImage!!.length() / 1024}KB")
                 ivOutput.visibility = View.INVISIBLE
 
             } else {

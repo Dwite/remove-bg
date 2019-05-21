@@ -1,4 +1,4 @@
-package com.theapache64.removebg
+package com.theapache64.removebg.utils
 
 
 import com.google.gson.annotations.SerializedName

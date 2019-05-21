@@ -1,4 +1,4 @@
-package com.theapache64.removebg
+package com.theapache64.removebg.utils
 
 import okhttp3.MediaType
 import okio.Okio
