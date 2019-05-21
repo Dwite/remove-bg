@@ -6,4 +6,7 @@
     <string name="message_tap_to_choose_image">Tap to choose image</string>
     <string name="error_no_image_selected">No image selected</string>
     <string name="title_permission">Permission</string>
+    <string name="message_permission">To save processed image, we need access to your external storage</string>
+    <string name="action_ok">OK</string>
+    <string name="error_permission">Can\'t process image without storage permission</string>
 </resources>
