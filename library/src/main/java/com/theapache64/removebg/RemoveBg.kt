@@ -44,6 +44,7 @@ object RemoveBg {
                 }
 
             })
+
         val body = MultipartBody.Builder()
             .setType(MultipartBody.FORM)
             .addFormDataPart("size", "auto")

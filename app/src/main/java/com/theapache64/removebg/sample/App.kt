@@ -5,7 +5,6 @@ import com.theapache64.removebg.RemoveBg
 
 class App : Application() {
 
-
     override fun onCreate() {
         super.onCreate()
 
