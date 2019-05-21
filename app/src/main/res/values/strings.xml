@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">remove-bg</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_process">PROCESS</string>
+    <string name="action_choose_image">CHOOSE IMAGE</string>
+    <string name="message_tap_to_choose_image">Tap to choose image</string>
+    <string name="error_no_image_selected">No image selected</string>
+    <string name="title_permission">Permission</string>
+</resources>
