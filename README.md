@@ -1,7 +1,7 @@
 # remove-bg
-An unofficial android SDK for remove.bg
+Remove.bg is a free service to remove the background of any photo. It works 100% automatically: You don't have to manually select the background/foreground layers to separate them - just select your image and instantly download the result image with the background removed!
 
-![](demo.gif)
+<img src="https://raw.githubusercontent.com/theapache64/remove-bg/master/demo.gif" width="400">
 
 ## Installation
 
