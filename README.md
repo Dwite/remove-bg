@@ -1,6 +1,8 @@
 # remove-bg
 An unofficial android SDK for remove.bg
 
+![](demo.gif)
+
 ## Installation
 
 ```gradle
