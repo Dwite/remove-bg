@@ -1,6 +1,31 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
+ext {
+    bintrayRepo = 'maven'
+    bintrayName = 'remove-bg'
+
+    publishedGroupId = 'com.theapache64.remove-bg'
+    libraryName = 'remove-bg'
+    artifact = 'remove-bg'
+
+    libraryDescription = 'Remove.bg is a free service to remove the background of any photo. It works 100% automatically: You don\'t have to manually select the background/foreground layers to separate them - just select your image and instantly download the result image with the background removed!'
+
+    siteUrl = 'https://github.com/theapache64/remove-bg'
+    gitUrl = 'https://github.com/theapache64/remove-bg.git'
+
+    libraryVersion = library_version_name
+
+    developerId = 'theapache64'
+    developerName = 'theapache64'
+    developerEmail = 'theapache64@gmail.com'
+
+    licenseName = 'The Apache Software License, Version 2.0'
+    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+    allLicenses = ["Apache-2.0"]
+}
+
+
 android {
     compileSdkVersion compile_sdk_version
 
@@ -43,6 +68,11 @@ dependencies {
     // Logger
     implementation 'com.theapache64.twinkill:logger:0.0.1-alpha04'
 }
+
 repositories {
     mavenCentral()
 }
+
+
+apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/installv1.gradle'
+apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/bintrayv1.gradle'
